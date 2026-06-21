@@ -1,0 +1,2 @@
+[console_scripts]
+dime = dime_cli.main:main
