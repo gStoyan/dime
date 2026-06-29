@@ -6,4 +6,10 @@ dime.egg-info/entry_points.txt
 dime.egg-info/top_level.txt
 dime_cli/__init__.py
 dime_cli/main.py
-dime_cli/jobs/__init__.py
+dime_cli/jobs/focus/__init__.py
+dime_cli/jobs/focus/focus.py
+dime_cli/jobs/news/__init__.py
+dime_cli/jobs/news/main.py
+dime_cli/jobs/news/tech.py
+dime_cli/jobs/news/world.py
+dime_cli/jobs/todo/todo.py

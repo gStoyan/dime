@@ -8,6 +8,8 @@ BASE_DIR = Path(__file__).parent
 
 FOCUS_STATE_FILE = BASE_DIR / "focus_state.json"
 BREAK_STATE_FILE = BASE_DIR / "break_state.json"
+FOCUS_LOG_FILE = BASE_DIR / "focus_logs.json"
+ 
 
 def load_state(mode: str):
     STATE_FILE = FOCUS_STATE_FILE if mode == "focus" else BREAK_STATE_FILE
@@ -82,7 +84,37 @@ def stop_break_timer():
         second = int(elapsed % 60)
         print(f"Break time: {hour}h {minute}m {second}s")
 
+
+def log_focus_session():
+    focus_state = load_state("focus")
+    if focus_state["elapsed"] > 0:
+        elapsed = focus_state["elapsed"]
+        hour = int(elapsed // 3600)
+        minute = int((elapsed % 3600) // 60)
+        second = int(elapsed % 60)
+        log_entry = {
+            "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+            "focus_time": f"{hour}h {minute}m {second}s"
+        }
+        if FOCUS_LOG_FILE.exists():
+            try:
+                with open(FOCUS_LOG_FILE, 'r') as f:
+                    logs = json.load(f)
+            except (json.JSONDecodeError, IOError):
+                logs = []
+        else:
+            logs = []
+        logs.append(log_entry)
+        try:
+            with open(FOCUS_LOG_FILE, 'w') as f:
+                json.dump(logs, f)
+        except IOError as e:
+            print(f"Warning: Could not save focus log: {e}")
+
 def reset_timers():
+    stop_focus_timer()
+    stop_break_timer()
+    log_focus_session()
     for mode in ["focus", "break"]:
         state_file = FOCUS_STATE_FILE if mode == "focus" else BREAK_STATE_FILE
         if state_file.exists():
