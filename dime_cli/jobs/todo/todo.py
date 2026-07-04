@@ -5,6 +5,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).parent
 
 TODO_LIST_FILE = BASE_DIR / "todo_list.json"
+LOG_TODO_FILE = BASE_DIR / "todo_log.json"
 
 def load_todo_list():
     if TODO_LIST_FILE.exists():
@@ -46,7 +47,28 @@ def mark_task_completed(index):
     else:
         print("Invalid task index.")
 
+def log_todo_list():
+    todo_list = load_todo_list()
+    try:
+        logs = []
+        if LOG_TODO_FILE.exists():
+            try:
+                with open(LOG_TODO_FILE, 'r') as f:
+                    content = f.read().strip()
+                    if content: 
+                        logs = json.loads(content)
+            except json.JSONDecodeError:
+                logs = []
+        
+        logs.append(todo_list)
+        with open(LOG_TODO_FILE, 'w') as f:
+            json.dump(logs, f, indent=2)
+        print("Todo list has been logged.")
+    except IOError as e:
+        print(f"Warning: Could not log todo list: {e}")
+
 def reset_todo_list():
+    log_todo_list()
     save_todo_list([])
     print("Todo list has been reset.")
 

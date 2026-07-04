@@ -107,7 +107,7 @@ def log_focus_session():
         logs.append(log_entry)
         try:
             with open(FOCUS_LOG_FILE, 'w') as f:
-                json.dump(logs, f)
+                json.dump(logs, f, indent=2)
         except IOError as e:
             print(f"Warning: Could not save focus log: {e}")
 
