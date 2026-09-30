@@ -39,12 +39,6 @@ def main():
     todo_parser.add_argument("task",
                              nargs="*",
                              help="Task description (required for 'add' command)")
-    todo_parser.add_argument("complete",
-                             nargs="?",
-                             help="Mark a task as completed (provide task number)")
-    todo_parser.add_argument("reset",
-                             nargs="?",
-                             help="Reset the todo list")
 
 
     if len(sys.argv) == 1:
@@ -54,13 +48,13 @@ def main():
 
     args = parser.parse_args()
 
-    if args.command == "news":
-        run_news(args.category)
-    elif args.command == "focus":
-        run_focus(args.mode)
-    elif args.command == "todo":
-        task = " ".join(args.task) if args.task else None
-        run_todo(args.param, task)    
+    commands = {
+        "news": lambda: run_news(args.category),
+        "focus": lambda: run_focus(args.mode),
+        "todo": lambda: run_todo(args.param, " ".join(args.task) if args.task else None)
+    }
+    
+    commands[args.command]()    
 
 
 
