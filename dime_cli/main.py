@@ -4,7 +4,7 @@ import sys
 from dime_cli.jobs.news.main import run as run_news
 from dime_cli.jobs.focus.focus import run as run_focus
 from dime_cli.jobs.todo.todo import run as run_todo
-from dime_cli.textual_app import run_textual_app
+from dime_cli.tui import run_textual_app
 
 ASCII_LOGO = r"""
 ██████╗ ██╗███╗   ███╗███████╗
@@ -14,9 +14,10 @@ ASCII_LOGO = r"""
 ██████╔╝██║██║ ╚═╝ ██║███████╗
 ╚═════╝ ╚═╝╚═╝     ╚═╝╚══════╝
 """
-def main():
-    
-    parser = argparse.ArgumentParser(description="dime CLI tool")
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(prog="dime", description="dime CLI tool")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     news_parser = subparsers.add_parser("news",
@@ -47,12 +48,18 @@ def main():
         description="Launches a full-screen terminal app with dashboard panels and a command bar."
     )
 
-    if len(sys.argv) == 1:
-        print(ASCII_LOGO)
-        parser.print_help()
+    return parser
+
+
+def main(argv: list[str] | None = None):
+    args_list = sys.argv[1:] if argv is None else argv
+
+    if not args_list:
+        run_textual_app()
         return
 
-    args = parser.parse_args()
+    parser = build_parser()
+    args = parser.parse_args(args_list)
 
     commands = {
         "news": lambda: run_news(args.category),
