@@ -4,6 +4,7 @@ import sys
 from dime_cli.jobs.news.main import run as run_news
 from dime_cli.jobs.focus.focus import run as run_focus
 from dime_cli.jobs.todo.todo import run as run_todo
+from dime_cli.textual_app import run_textual_app
 
 ASCII_LOGO = r"""
 ██████╗ ██╗███╗   ███╗███████╗
@@ -40,6 +41,11 @@ def main():
                              nargs="*",
                              help="Task description (required for 'add' command)")
 
+    subparsers.add_parser(
+        "app",
+        help="Open the Textual terminal app",
+        description="Launches a full-screen terminal app with dashboard panels and a command bar."
+    )
 
     if len(sys.argv) == 1:
         print(ASCII_LOGO)
@@ -51,10 +57,11 @@ def main():
     commands = {
         "news": lambda: run_news(args.category),
         "focus": lambda: run_focus(args.mode),
-        "todo": lambda: run_todo(args.param, " ".join(args.task) if args.task else None)
+        "todo": lambda: run_todo(args.param, " ".join(args.task) if args.task else None),
+        "app": run_textual_app,
     }
-    
-    commands[args.command]()    
+
+    commands[args.command]()
 
 
 
